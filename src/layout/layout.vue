@@ -1,6 +1,6 @@
 <script setup>
 // @ts-ignore
-import Menu from '@/layout/Menu.tsx'
+import IMenu from '@/layout/Menu.tsx'
 
 const route = useRoute()
 </script>
@@ -8,7 +8,7 @@ const route = useRoute()
 <template>
 	<div class="page-container">
 		<el-container>
-			<el-header><Menu /></el-header>
+			<el-header><IMenu /></el-header>
 			<el-main>
 				<div id="content" class="content">
 					<router-view :key="route.path" />

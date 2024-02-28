@@ -5,7 +5,7 @@ import { routerList } from '@/router/index'
 import { getParentPaths } from '@/router/utils'
 
 export default defineComponent({
-  name: 'Menu',
+  name: 'IMenu',
   components: {
     ElMenu,
     ElSubMenu,

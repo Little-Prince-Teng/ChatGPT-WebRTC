@@ -26,6 +26,12 @@ export default defineConfig({
 			resolvers: [
 				// 自动导入 Element-Plus 的 Api
 				ElementPlusResolver()],
+			// eslint报错解决方案
+			eslintrc: {
+				enabled: true, // Default `false`
+				filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
+				globalsPropValue: true, // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
+			},
 		}),
 		// 按需导入组件
 		Components({
