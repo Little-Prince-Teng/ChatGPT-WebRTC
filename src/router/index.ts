@@ -3,10 +3,12 @@ import { formatFlatteningRoutes } from './utils'
 
 import Layout from '@/layout/layout.vue'
 import { home } from './modules/home'
+import { audioAndVideo } from './modules/audio-and-video'
 
 // 用于渲染菜单，面包屑
 export const routerList: Array<RouteRecordRaw> = [
-	...home
+	...home,
+	...audioAndVideo
 ]
 
 // 扁平化路由
