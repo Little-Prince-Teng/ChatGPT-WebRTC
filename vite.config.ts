@@ -5,7 +5,10 @@ import * as path from 'path'
 
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
+import RequireTransform from 'vite-plugin-require-transform'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import Icons from 'unplugin-icons/vite'
+import IconsResolver from 'unplugin-icons/resolver'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -25,7 +28,14 @@ export default defineConfig({
 			imports: ['vue', 'vue-router'],
 			resolvers: [
 				// 自动导入 Element-Plus 的 Api
-				ElementPlusResolver()],
+				ElementPlusResolver(),
+				// 自动导入图标组件
+				// 自动导入必须遵循名称格式 {prefix：默认为i}-{collection：图标集合的名称}-{icon：图标名称}
+				IconsResolver({
+					prefix: 'Icon',
+					extension: 'vue',
+				}),
+			],
 			// eslint报错解决方案
 			eslintrc: {
 				enabled: true, // Default `false`
@@ -43,9 +53,23 @@ export default defineConfig({
 			],
 			resolvers: [
 				// 按需导入 Element-Plus 组件
-				ElementPlusResolver()
+				ElementPlusResolver(),
+				// 自动注册图标组件
+				IconsResolver({
+					enabledCollections: ['ep'],
+					extension: 'vue',
+				}),
 			],
 		}),
+		Icons({
+			autoInstall: true,
+			compiler: 'vue3',
+			defaultStyle: 'font-size: 16px;',
+		}),
+		// 兼容 require() 引入方式
+		RequireTransform({
+			fileRegex: /.ts$|.tsx$|.vue$/
+		})
 	],
 	// 配置解析器
 	resolve: {

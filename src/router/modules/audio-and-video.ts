@@ -23,7 +23,12 @@ export const audioAndVideo: RouteRecordRaw[] = [
 						path: '/audio-and-video/webRTC/signaling-p2p',
 						meta: { title: '音视频通话' },
 						component: () => import('@/page/webRTC/signaling-p2p.vue')
-					}
+					},
+					{
+						path: '/audio-and-video/webRTC/video-conferencing',
+						meta: { title: '视频会议' },
+						component: () => import('@/page/webRTC/video-conferencing.vue')
+					},	
 				]
 			}
 		]
