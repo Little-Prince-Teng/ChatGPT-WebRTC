@@ -16,6 +16,7 @@
     "livekit-client": "^2.0.4",
     "livekit-server-sdk": "^2.0.4",
     "socket.io-client": "^4.7.4",
+    "veaury": "^2.3.16",
     "vue": "^3.4.19",
     "vue-router": "^4.3.0"
   },

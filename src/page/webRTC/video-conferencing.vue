@@ -10,8 +10,20 @@ import {
   VideoPresets
 } from 'livekit-client'
 
-import { Microphone } from '@element-plus/icons-vue'
+import { Microphone, Mute, VideoCamera, VideoPause, UserFilled } from '@element-plus/icons-vue'
 import MediaToggle from '@/components/MediaToggle.vue'
+import UserIcon from '@/components/UserIcon.vue'
+
+const room = new Room({
+	// automatically manage quality of subscribed video tracks to optimize for bandwidth and CPU
+	adaptiveStream: true,
+	// optimize publishing bandwidth and CPU for published tracks
+	dynacast: true,
+	videoCaptureDefaults: {
+		resolution: VideoPresets.h720.resolution
+	}
+})
+const p = room.localParticipant
 
 const isLoading = ref(true)
 
@@ -29,13 +41,37 @@ const audioDevices = ref([])
 const currentAudioDeviceId = ref()
 const videoDevices = ref([])
 const currentVideoDeviceId = ref()
-
-const mediaList = reactive([
-	{ media: 'MacBookPro', name: 'MacBook Pro麦克风' },
-	{ media: 'iPhoneX', name: 'iPhone X的麦克风' }
-])
+const isOpenAudio = ref(true)
+const isOpenVideo = ref(true)
 
 const localVideoList = ref()
+
+// 切换音频状态开/关
+async function toggleAudioStatus() {
+	isOpenAudio.value = !isOpenAudio.value
+	await p.setMicrophoneEnabled(isOpenAudio.value)
+}
+// 选择音频
+async function selectAudio(audio) {
+	currentAudioDeviceId.value = audio
+	await room.switchActiveDevice('audioinput', currentAudioDeviceId.value)
+}
+
+// 切换视频状态开/关
+async function toggleVideoStatus() {
+	isOpenVideo.value = !isOpenVideo.value
+	await p.setCameraEnabled(isOpenVideo.value)
+}
+// 选择视频
+async function selectVideo(video) {
+	currentVideoDeviceId.value = video
+	await room.switchActiveDevice('videoinput', currentVideoDeviceId.value)
+}
+
+// 共享屏幕
+async function shareScreen() {
+	await p.setScreenShareEnabled(true)
+}
 
 function handleTrackSubscribed(track, publication, participant) {
 	console.log('track', track)
@@ -95,24 +131,20 @@ function DataReceived(payload, participant, kind) {
 onMounted(async () => {
 	try {
 		isLoading.value = true
-		const livekit = require('livekit-client')
-		const room = new livekit.Room({
-			// automatically manage quality of subscribed video tracks to optimize for bandwidth and CPU
-			adaptiveStream: true,
-			// optimize publishing bandwidth and CPU for published tracks
-			dynacast: true,
-			// videoCaptureDefaults: {
-			// 	resolution: VideoPresets.h720.resolution
-			// }
-		})
-		const strData = JSON.stringify({ some: "data" })
-    const encoder = new TextEncoder()
-		// publishData takes in a Uint8Array, so we need to convert it
-    const data = encoder.encode(strData)
-		// publish to everyone in the room
-		room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE)
-		// publish to specific participants
-    room.localParticipant.publishData(data, DataPacket_Kind.LOSSY, ['participant_sid'])
+		// const strData = JSON.stringify({ some: "data" })
+    // const encoder = new TextEncoder()
+		// // publishData takes in a Uint8Array, so we need to convert it
+    // const data = encoder.encode(strData)
+		// // publish to everyone in the room
+		// room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE)
+		// // publish to specific participants
+    // room.localParticipant.publishData(data, DataPacket_Kind.LOSSY, ['participant_sid'])
+
+		const url = 'wss://webrtc-video-conferencing-umt4ef6f.livekit.cloud'
+		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA1Nzc0NTgsImlzcyI6IkFQSUxnQnE5amVMYjdpRyIsIm5iZiI6MTcwOTk3NzQ1OCwic3ViIjoibHUtdGVuZyIsInZpZGVvIjp7ImNhblB1Ymxpc2giOnRydWUsImNhblB1Ymxpc2hEYXRhIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWUsInJvb20iOiJsdC1yb29tIiwicm9vbUpvaW4iOnRydWV9fQ.xc0iEuEICCwoT1DDokWkGmO0v6xqLvFMTt-RQmYoKJY"
+		
+		room.prepareConnection(url, token)
+
 		// 设置房间的参数
 		room
 			// 轨道订阅
@@ -131,7 +163,7 @@ onMounted(async () => {
 			.on(RoomEvent.TrackUnmuted, (res) => {
 				console.log("Track muted", res)
 			})
-			//轨迹静音
+			// 轨迹静音
 			.on(RoomEvent.TrackMuted, (res) => {
 				console.log("TrackMuted muted", res)
 			})
@@ -150,19 +182,16 @@ onMounted(async () => {
 			// 本地曲目未发布
 			.on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
 
-		const url = 'wss://webrtc-video-conferencing-umt4ef6f.livekit.cloud'
-		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA1Nzc0NTgsImlzcyI6IkFQSUxnQnE5amVMYjdpRyIsIm5iZiI6MTcwOTk3NzQ1OCwic3ViIjoibHUtdGVuZyIsInZpZGVvIjp7ImNhblB1Ymxpc2giOnRydWUsImNhblB1Ymxpc2hEYXRhIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWUsInJvb20iOiJsdC1yb29tIiwicm9vbUpvaW4iOnRydWV9fQ.xc0iEuEICCwoT1DDokWkGmO0v6xqLvFMTt-RQmYoKJY"
 		// connect to room
 		await room.connect(url, token)
 		// 房间的状态
-		await room.localParticipant.enableCameraAndMicrophone()
-		// await p.setScreenShareEnabled(true)
+		await p.enableCameraAndMicrophone()
 
-		// 在创建房间之前创建轨道
-		const localTrack = await createLocalTracks({
-			audio: true,
-			video: true,
-		})
+		// // 在创建房间之前创建轨道
+		// const localTrack = await createLocalTracks({
+		// 	audio: true,
+		// 	video: true,
+		// })
 
 		// 获取所有音频设备
 		audioDevices.value = await Room.getLocalDevices('audioinput')
@@ -182,7 +211,6 @@ onMounted(async () => {
 
 		isLoading.value = false
 
-		const p = room.localParticipant
 		if (p.isCameraEnabled) {
 			const publication = await p.getTrackPublication(Track.Source.Camera)
 			if (publication?.isSubscribed) {
@@ -223,20 +251,37 @@ onMounted(async () => {
 					<div class="focus-layout">
 						<div class="aside"></div>
 						<div class="participant-tile">
-							<div ref="localVideoList" class="me_style"></div>
-							<div ref="remoteVideoList" class="user_style"></div>
+							<div ref="localVideoList"></div>
+							<div ref="remoteVideoList"></div>
+
+							<div v-if="!isOpenVideo" class="participant-placeholder">
+								<UserIcon />
+							</div>
+							<div class="participant-metadata"></div>
 						</div>
-						<div class="participant-metadata"></div>
 					</div>
 				</div>
 				<div class="control-bar">
 					<MediaToggle
 						media-default-text="Microphone"
-						:media-icon="Microphone"
+						:media-icon="isOpenAudio ? Microphone : Mute"
 						:media-list="audioDevices"
-						:current-media-id="currentAudioDeviceId?.value"
+						:current-media-id="currentAudioDeviceId"
+						:open="isOpenAudio"
+						@toggle="toggleAudioStatus"
+						@select="selectAudio"
 					></MediaToggle>
-					<el-button type="primary">共享屏幕</el-button>
+
+					<MediaToggle
+						media-default-text="Camera"
+						:media-icon="isOpenVideo ? VideoCamera : VideoPause"
+						:media-list="videoDevices"
+						:current-media-id="currentVideoDeviceId"
+						:open="isOpenVideo"
+						@toggle="toggleVideoStatus"
+						@select="selectVideo"
+					></MediaToggle>
+					<el-button type="primary" @click="shareScreen">共享屏幕</el-button>
 				</div>
 			</div>
 		</div>
@@ -258,6 +303,38 @@ onMounted(async () => {
 		position: relative;
 		display: flex;
 		height: 100%;
+
+		.video-conference-innner {
+			.focus-layout-wrapper {
+				.focus-layout {
+					.participant-tile {
+						position: relative;
+						display: flex;
+						flex-direction: column;
+						gap: 0.375rem;
+						overflow: hidden;
+						border-radius: 0.5rem;
+
+						.participant-placeholder {
+							position: absolute;
+							inset: 0;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							background: #1E1E1E;
+							opacity: 1;
+							transition: opacity .2s ease-in-out;
+
+							svg {
+								height: 100%;
+								width: auto;
+								padding: 10%;
+							}
+						}
+					}
+				}
+			}	
+		}
 
 		.control-bar {
 			padding: 0.75rem;
