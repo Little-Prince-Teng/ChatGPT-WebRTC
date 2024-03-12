@@ -4,11 +4,13 @@ import { formatFlatteningRoutes } from './utils'
 import Layout from '@/layout/layout.vue'
 import { home } from './modules/home'
 import { audioAndVideo } from './modules/audio-and-video'
+import { meeting } from './modules/meeting'
 
 // 用于渲染菜单，面包屑
 export const routerList: Array<RouteRecordRaw> = [
 	...home,
-	...audioAndVideo
+	...audioAndVideo,
+	...meeting
 ]
 
 // 扁平化路由

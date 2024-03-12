@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import veauryVitePlugins from 'veaury/vite/index.js'
 import * as path from 'path'
 
 import AutoImport from 'unplugin-auto-import/vite'
@@ -15,6 +16,10 @@ export default defineConfig({
   plugins: [
 		vue(),
 		vueJsx(),
+		// type设为vue时, 所有名为react_app目录中的文件的jsx将被react jsx编译，其他文件里的jsx将以vue jsx编译
+    // veauryVitePlugins({
+    //   type: 'vue'
+    // }),
 		// api 自动导入
 		AutoImport({
 			dts: true,

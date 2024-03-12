@@ -86,7 +86,7 @@ export default defineComponent({
           collapse={props.isCollapse}
           class='el-menu-vertical'
           collapse-transition={false}
-          background-color='#516FA3'
+          background-color='#000'
           menu-trigger='hover'
           text-color='#fff'
           default-active={defaultActive.value}

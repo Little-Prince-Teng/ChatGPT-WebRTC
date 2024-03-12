@@ -40,7 +40,6 @@ const route = useRoute()
       height: calc(100vh - 58px);
       width: 100%;
       position: relative;
-      background: #e8f1ff;
     }
   }
 }
