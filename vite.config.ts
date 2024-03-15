@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import veauryVitePlugins from 'veaury/vite/index.js'
 import * as path from 'path'
 
 import AutoImport from 'unplugin-auto-import/vite'
@@ -12,14 +11,26 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
+export default defineConfig((config) => ({
+	// build: {
+	// 	rollupOptions: {
+	// 		external: ["react", "react-dom"],
+	// 	}
+	// },
+	// optimizeDeps: {
+	// 	include: ["react", "react-dom"]
+	// },
+	plugins: [
 		vue(),
 		vueJsx(),
+		// viteExternalsPlugin({
+		// 	"react": "React",
+		// 	"react-dom": "ReactDOM",
+		// }),
 		// type设为vue时, 所有名为react_app目录中的文件的jsx将被react jsx编译，其他文件里的jsx将以vue jsx编译
-    // veauryVitePlugins({
-    //   type: 'vue'
-    // }),
+		// veauryVitePlugins({
+		//   type: 'vue'
+		// }),
 		// api 自动导入
 		AutoImport({
 			dts: true,
@@ -76,6 +87,18 @@ export default defineConfig({
 			fileRegex: /.ts$|.tsx$|.vue$/
 		})
 	],
+	// 服务器配置
+	server: {
+		port: 5173,
+		open: false,
+		proxy: {
+			'/api': {
+				target: 'http://localhost:5173',
+				changeOrigin: true,
+				pathRewrite: { '^/api': '/src/api' }
+			},
+		},
+	},
 	// 配置解析器
 	resolve: {
 		// 设置别名
@@ -94,4 +117,4 @@ export default defineConfig({
 			}
 		}
 	}
-})
+}))

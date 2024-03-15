@@ -7,9 +7,9 @@ export const meeting: RouteRecordRaw[] = [
 		meta: { title: '会议', type: 'single' },
 		children: [
 			{
-				path: '/meeting/rooms/:id',
+				path: '/meeting/rooms/:name',
 				meta: { title: 'start meeting' },
-				component: () => import('@/page/meeting/rooms/index.vue')
+				component: () => import('@/page/meeting/rooms/[name].vue')
 			}
 		]
 	}
