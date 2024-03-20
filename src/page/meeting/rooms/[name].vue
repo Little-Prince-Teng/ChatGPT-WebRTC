@@ -1,17 +1,10 @@
 <script setup lang="ts">
 import { applyPureReactInVue } from 'veaury'
 import { useRouter } from 'vue-router'
-import dynamic from 'next/dynamic'
-import { LocalUserChoices } from '@livekit/components-react'
+import { LocalUserChoices, PreJoin } from '@livekit/components-react'
 import ActiveRoom from './index.vue'
 
-const PreJoinMeeting = dynamic(
-  async () => {
-    return (await import('@livekit/components-react')).PreJoin
-  },
-  { ssr: false },
-)
-const PreJoinNoSSR = applyPureReactInVue(PreJoinMeeting)
+const PreJoinNoSSR = applyPureReactInVue(PreJoin)
 
 const router = useRouter()
 const preJoinChoices = ref()

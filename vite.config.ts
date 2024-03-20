@@ -93,9 +93,8 @@ export default defineConfig((config) => ({
 		open: false,
 		proxy: {
 			'/api': {
-				target: 'http://localhost:5173',
+				target: 'http://localhost:8080',
 				changeOrigin: true,
-				pathRewrite: { '^/api': '/src/api' }
 			},
 		},
 	},

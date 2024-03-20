@@ -29,7 +29,8 @@ const props = defineProps<Props>()
 
 const router = useRouter()
 const { hq, region, codec } = router.currentRoute.value.query
-const liveKitUrl = useServerUrl(region as string | undefined)
+const meetingUrl = useServerUrl(region as string | undefined)
+const meetingToken = ref()
 const tokenOptions = computed(() => {
 	return {
 		userInfo: {
@@ -38,21 +39,27 @@ const tokenOptions = computed(() => {
 		}
 	}
 })
-// 创建一个跨技术栈到vue的react hooks和一个对应使用的react provider
-// const [useHooksInVue, HooksProvider] = createCrossingProviderForPureVueInReact(
-// 	function () {
-// 		return {
-// 			// 将前面创建的React context的值暴露给vue，使用useContext hooks
-// 			token: useToken(import.meta.env.VITE_PUBLIC_LK_TOKEN_ENDPOINT, props.roomName, tokenOptions)
-// 		}
-// 	}
-// )
-// 将HooksProvider转换为vue组件
-// const VueMissReact = applyPureReactInVue(HooksProvider)
-const Meeting = applyPureReactInVue(LiveKitRoom)
 
-// const token = useToken(import.meta.env.VITE_PUBLIC_LK_TOKEN_ENDPOINT, props.roomName, tokenOptions)
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA1Nzc0NTgsImlzcyI6IkFQSUxnQnE5amVMYjdpRyIsIm5iZiI6MTcwOTk3NzQ1OCwic3ViIjoibHUtdGVuZyIsInZpZGVvIjp7ImNhblB1Ymxpc2giOnRydWUsImNhblB1Ymxpc2hEYXRhIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWUsInJvb20iOiJsdC1yb29tIiwicm9vbUpvaW4iOnRydWV9fQ.xc0iEuEICCwoT1DDokWkGmO0v6xqLvFMTt-RQmYoKJY'
+// 创建一个跨技术栈到vue的react hooks和一个对应使用的react provider
+const [useHooksInVue, HooksProvider] = createCrossingProviderForPureVueInReact(
+	() => {
+		return {
+			// 将前面创建的React context的值暴露给vue，使用useContext hooks
+			token: useToken(import.meta.env.VITE_PUBLIC_LK_TOKEN_ENDPOINT, props.roomName, tokenOptions.value)
+		}
+	}
+)
+// 将HooksProvider转换为vue组件
+const VueMissReact = applyPureReactInVue(HooksProvider)
+const Meeting = applyPureReactInVue(LiveKitRoom, {
+	async useInjectPropsFromWrapper() {
+		const { token } = await useHooksInVue()
+		meetingToken.value = token
+		return {
+			token
+		}
+	}
+})
 
 const roomOptions = computed<RoomOptions>(() => {
 	const videoCodec: VideoCodec | undefined = (
@@ -83,14 +90,15 @@ const connectOptions = computed<RoomConnectOptions>(() => {
 		autoSubscribe: true
 	}
 })
-const room = new Room(roomOptions)
+const room = new Room(roomOptions.value)
 </script>
 
 <template>
+<VueMissReact>
 	<Meeting
 		:room="room"
-		:token="token"
-		:serverUrl="liveKitUrl"
+		:token="meetingToken"
+		:serverUrl="meetingUrl"
 		:connect-options="connectOptions"
 		:video="userChoices.videoEnabled"
 		:audio="userChoices.audioEnabled"
@@ -100,4 +108,5 @@ const room = new Room(roomOptions)
 			:chatMessageFormatter="formatChatMessageLinks"
 		/>
 	</Meeting>
+</VueMissReact>
 </template>
