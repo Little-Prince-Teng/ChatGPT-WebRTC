@@ -159,7 +159,7 @@ function downloadBlob(blob: Blob) {
     justify-content: center;
     align-items: center;
 		box-sizing: border-box;
-		background-color: #516fa3;
+		background-color: #1e1e1e;
 	}
 }
 </style>

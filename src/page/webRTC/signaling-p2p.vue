@@ -233,7 +233,6 @@ onMounted(async () => {
 	}
 	video {
 		margin: 0 auto;
-		border: 4px solid #048ff2;
 		background-color: #363739;
 		width: 100%;
 		height: 100%;
@@ -243,7 +242,7 @@ onMounted(async () => {
 		flex: 1;
 		height: 100%;
 		border-radius: 30px;
-		background-color: #3f4044;
+		background-color: #111;
 		position: relative;
 	}
 
@@ -252,23 +251,18 @@ onMounted(async () => {
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		background-color: #000000b3;
+		background-color: #111;
 		color: #fff;
 		text-align: center;
 		box-sizing: border-box;
 		padding: 5px;
-		border-left: 4px;
-		border-right: 4px;
-		border-bottom: 4px;
-		border-style: solid;
-		border-color: #048ff2;
 	}
 
 	.video-list {
 		width: 300px;
 		height: 100%;
 		padding: 20px;
-		background-color: #405982;
+		background-color: #111;
 
 		.video-box {
 			position: relative;
@@ -284,7 +278,7 @@ onMounted(async () => {
     width: 100%;
     height: 100px;
     text-align: center;
-    background-color: #405982;
+    background-color: #1e1e1e;
     display: flex;
     justify-content: center;
     align-items: center;

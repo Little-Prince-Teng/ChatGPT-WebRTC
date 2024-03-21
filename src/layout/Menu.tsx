@@ -27,8 +27,8 @@ export default defineComponent({
     // 获取激活的菜单
     function getDefaultActive() {
       // 当前路由的最顶级父路由
-      parentRoutes.value = getParentPaths(route.path, routerList)[0]
-      defaultActive.value = route.path || (parentRoutes.value?.path as string)
+      parentRoutes.value = getParentPaths(route.name, routerList)[0]
+      defaultActive.value = !route.meta?.fold ? route.path : (parentRoutes.value?.path as string)
     }
 
     // 创建菜单

@@ -100,6 +100,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .webrtc-container {
+	margin-top: 2rem;
 	display: flex;
 	justify-content: space-between;
 

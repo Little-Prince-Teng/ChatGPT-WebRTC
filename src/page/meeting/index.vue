@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -10,6 +11,10 @@ const inputStyle = {
 }
 
 function startMeeting() {
+	if (!meetingID.value) {
+		ElMessage({ message: '请输入会议ID', type: 'error' })
+		return
+	}
 	router.push({ path: `/meeting/rooms/${ meetingID.value }` })
 }
 </script>
@@ -20,7 +25,7 @@ function startMeeting() {
 			<div class="title">Meeting</div>
 			<div class="meetingID-wrapper">
 				<div class="desc">会议ID:</div>
-				<el-input v-model="meetingID" :input-style="inputStyle" class="meetingID-input" placeholder="请输入会议ID" />
+				<el-input v-model="meetingID" :input-style="inputStyle" class="meetingID-input" placeholder="例如: room-name" />
 			</div>
 			<el-button color="#1e1e1e" size="large" @click="startMeeting">Start Meeting</el-button>
 		</div>
