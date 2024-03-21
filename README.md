@@ -13,18 +13,26 @@
 
 ## 安装依赖
 
->npm install
+```
+npm install
+```
 
 ## 启动客户端
 
->npm run dev
+```
+npm run dev
+```
 
 ## p2p音视频通信需要启动服务
 
->git clone https://github.com/Little-Prince-Teng/node-WebRTC
->npm install
->npm run dev
+```
+git clone https://github.com/Little-Prince-Teng/node-WebRTC
+npm install
+npm run dev
+```
 
 ## 多人音视频会议需要启动服务
 
-> 当前项目中执行: npm run server
+```
+当前项目中执行: npm run server
+```
